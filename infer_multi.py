@@ -23,22 +23,21 @@ def create_messages(queries: list[str]):
 
 def describe_images(imgpath, messages,
                     pretrained_modelname="HuggingFaceTB/SmolVLM-Instruct",
-                    DEVICE = "cpu"
+                    device = "cpu"
                     ):
-    print(f"DEVICE. {DEVICE}")
     #from transformers import Idefics3ImageProcessor
     processor = AutoProcessor.from_pretrained(pretrained_modelname)
     model = AutoModelForVision2Seq.from_pretrained(pretrained_model_name_or_path=pretrained_modelname,
                                                 torch_dtype=torch.float32,
                                                 #_attn_implementation="flash_attention_2" if DEVICE == "cuda" else "eager",
-                                                ).to(DEVICE)
+                                                ).to(device)
 
     img = load_image(imgpath)
     res = None
     for message in messages:
         prompt = processor.apply_chat_template(message, add_generation_prompt=True)
         inputs = processor(text=prompt, images=[img], return_tensors="pt")
-        inputs = inputs.to(DEVICE)
+        inputs = inputs.to(device)
         generated_ids = model.generate(**inputs, max_new_tokens=50)
         generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
         res = generated_texts[0]
