@@ -22,13 +22,12 @@ def create_messages(queries: list[str]):
 
 
 def describe_images(imgpath, messages,
-                    pretrained_modelname="HuggingFaceTB/SmolVLM-Instruct"
+                    pretrained_modelname="HuggingFaceTB/SmolVLM-Instruct",
+                    DEVICE = "cpu"
                     ):
-    #DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    DEVICE = "cpu"
     print(f"DEVICE. {DEVICE}")
     #from transformers import Idefics3ImageProcessor
-    processor = Idefics3ImageProcessor.from_pretrained(pretrained_modelname)
+    processor = AutoProcessor.from_pretrained(pretrained_modelname)
     model = AutoModelForVision2Seq.from_pretrained(pretrained_model_name_or_path=pretrained_modelname,
                                                 torch_dtype=torch.float32,
                                                 #_attn_implementation="flash_attention_2" if DEVICE == "cuda" else "eager",
@@ -77,7 +76,6 @@ def run_multiprocess(imgdir,
                         total=len(imgpaths),
                     )
                 )
-    print("multiprocess of imaged feature extration completed")
     print(f"results: {results}")
     return results
 
